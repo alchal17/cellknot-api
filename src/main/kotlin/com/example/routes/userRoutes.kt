@@ -27,7 +27,7 @@ fun Route.userRoutes(userDao: UserDao) {
         get("/email_exists") {
             val email = call.request.queryParameters["email"]
             if (email != null) {
-                val result = userDao.ifUsernameExist(email)
+                val result = userDao.ifUserEmailExist(email)
                 call.respond(HttpStatusCode.OK, result)
             } else {
                 call.respond(HttpStatusCode.BadRequest)
@@ -37,9 +37,9 @@ fun Route.userRoutes(userDao: UserDao) {
         post("/create") {
             val user = call.receive<User>()
             if (userDao.ifUserEmailExist(user.email)) {
-                call.respond(HttpStatusCode.Conflict, message = "User with email '$user.mail' already exists.")
+                call.respond(HttpStatusCode.Conflict, message = "User with this email already exists.")
             } else if (userDao.ifUsernameExist(user.name)) {
-                call.respond(HttpStatusCode.Conflict, message = "User with name '$user.name' already exists.")
+                call.respond(HttpStatusCode.Conflict, message = "User with this username already exists.")
             } else {
                 userDao.add(
                     user
